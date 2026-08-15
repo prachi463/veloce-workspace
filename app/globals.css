@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+:root {
+  /* Core palette — Slate Obsidian base with Emerald/Cyan dual accent */
+  --v-obsidian: #0d0f12;
+  --v-obsidian-raised: #14171b;
+  --v-obsidian-deep: #08090b;
+  --v-emerald: #10b981;
+  --v-cyan: #06b6d4;
+  --v-amber: #f5a524;
+  --v-mist: #94a3b8;
+  --v-glass: rgba(255, 255, 255, 0.03);
+  --v-glass-border: rgba(255, 255, 255, 0.08);
+  --v-text: #e7ebef;
+  --v-text-dim: #9aa4b2;
+
+  --font-display: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "Consolas", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--v-obsidian);
+  color: var(--v-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--v-emerald);
+  color: var(--v-obsidian);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--v-obsidian);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--v-emerald), var(--v-cyan));
+  border-radius: 8px;
+}
+
+.glass {
+  background: var(--v-glass);
+  border: 1px solid var(--v-glass-border);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, var(--v-emerald), var(--v-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.grain {
+  position: relative;
+}
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMDAnIGhlaWdodD0nMTAwJz48ZmlsdGVyIGlkPSduJz48ZmVUdXJidWxlbmNlIHR5cGU9J2ZyYWN0YWxOb2lzZScgYmFzZUZyZXF1ZW5jeT0nMC44JyBudW1PY3RhdmVzPScyJyBzdGl0Y2hUaWxlcz0nc3RpdGNoJy8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9JzEwMCUnIGhlaWdodD0nMTAwJScgZmlsdGVyPSd1cmwoI24pJy8+PC9zdmc+");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-14px); }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}

@@ -1,0 +1,110 @@
+// Veloce Workspace — Prisma schema
+// Run `npx prisma generate` after setting DATABASE_URL in .env.local
+// Run `npx prisma migrate dev --name init` to create tables on a Postgres instance.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String?
+  passwordHash  String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  conversations Conversation[]
+  documents     Document[]
+  notes         Note[]
+  presentations Presentation[]
+  flashcardSets FlashcardSet[]
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String    @default("New conversation")
+  model     String    @default("groq") // groq | gemini | openai
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+
+  @@index([userId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String // user | assistant | system
+  content        String       @db.Text
+  model          String?
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileName  String
+  mimeType  String
+  sizeBytes Int
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Presentation {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  slidesJson Json
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model FlashcardSet {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title      String
+  createdAt  DateTime    @default(now())
+  flashcards Flashcard[]
+
+  @@index([userId])
+}
+
+model Flashcard {
+  id       String       @id @default(cuid())
+  setId    String
+  set      FlashcardSet @relation(fields: [setId], references: [id], onDelete: Cascade)
+  front    String       @db.Text
+  back     String       @db.Text
+  box      Int          @default(1) // spaced-repetition box, 1-5
+  dueAt    DateTime     @default(now())
+
+  @@index([setId])
+}
